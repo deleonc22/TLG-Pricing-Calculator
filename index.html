@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Company Pricing Calculators</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    header { background: #2c3e50; color: white; padding: 20px; text-align: center; position: relative; }
+    header img { position: absolute; top: 20px; left: 20px; height: 50px; }
+    nav { background: #34495e; padding: 10px; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    main { padding: 20px; max-width: 900px; margin: auto; background: white; border-radius: 8px; margin-top: 20px; }
+    .output { margin-top: 20px; background: #eef; padding: 15px; border-radius: 8px; }
+    label, input { display: block; margin: 10px 0; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Company Logo" />
+    <h1>Company Pricing Calculators</h1>
+    <p>Your internal tool for estimating job costs quickly and accurately</p>
+  </header>
+
+  <nav>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('turf')">Turf Calculator</a>
+    <a href="#" onclick="alert('More calculators coming soon!')">Other Calculators</a>
+  </nav>
+
+  <main>
+    <section id="home">
+      <h2>Welcome</h2>
+      <p>This internal web tool helps you estimate project pricing with guided calculators. Select a calculator from the menu above to begin.</p>
+      <ul>
+        <li><strong>Turf Calculator:</strong> Estimate artificial turf installation based on area, labor, and materials.</li>
+        <li><strong>More calculators</strong> will be added soon (e.g., paint, concrete, demolition).</li>
+      </ul>
+    </section>
+
+    <section id="turf" class="hidden">
+      <h2>Turf Installation Calculator</h2>
+
+      <label for="sqft">Square Footage:</label>
+      <input type="number" id="sqft" value="8460" />
+
+      <label for="laborHours">Labor Hours:</label>
+      <input type="number" id="laborHours" value="120" />
+
+      <button onclick="calculate()">Calculate</button>
+
+      <div class="output" id="results"></div>
+    </section>
+  </main>
+
+  <script>
+    function showSection(sectionId) {
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('turf').classList.add('hidden');
+      document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function calculate() {
+      const sqft = parseFloat(document.getElementById("sqft").value);
+      const laborHours = parseFloat(document.getElementById("laborHours").value);
+
+      const costs = {
+        turf: 3.27,
+        gluePer28oz: 37,
+        tapePer50ft: 28.5,
+        nailsPerBox: 174,
+        gravelPerTon: 75,
+        sandPerTon: 49,
+        yardWastePerCY: 33,
+        gasFee: 200,
+        machineFee: 800,
+        laborRateInternal: 55,
+        laborRateClient: 75
+      };
+
+      const baseRockCY = sqft / 80;
+      const sandInfillLbs = sqft * 2;
+      const nailsNeeded = (sqft * 12) / 8;
+      const seamTapeFT = sqft * 0.25;
+      const seamGlueGallons = seamTapeFT / 40;
+      const glueContainers = Math.ceil((seamGlueGallons * 128) / 28);
+
+      const materials = [
+        { name: "Turf", qty: sqft, unitCost: costs.turf },
+        { name: "Glue (28oz)", qty: glueContainers, unitCost: costs.gluePer28oz },
+        { name: "Seam Tape (50ft)", qty: Math.ceil(seamTapeFT / 50), unitCost: costs.tapePer50ft },
+        { name: "Nails (Box)", qty: Math.ceil(nailsNeeded / 720), unitCost: costs.nailsPerBox },
+        { name: "Gravel (Ton)", qty: Math.ceil(baseRockCY * 1.4), unitCost: costs.gravelPerTon },
+        { name: "Sand (Ton)", qty: Math.ceil(sandInfillLbs / 2000), unitCost: costs.sandPerTon },
+        { name: "Yard Waste (CY)", qty: baseRockCY, unitCost: costs.yardWastePerCY },
+        { name: "Gas Fee", qty: 1, unitCost: costs.gasFee },
+        { name: "Machine Fee", qty: 1, unitCost: costs.machineFee }
+      ];
+
+      let internalTotal = 0;
+      let clientTotal = 0;
+      let output = '<h3>Estimate Breakdown</h3><ul>';
+
+      materials.forEach(item => {
+        const internalCost = item.qty * item.unitCost;
+        const clientCost = internalCost * 1.25;
+        internalTotal += internalCost;
+        clientTotal += clientCost;
+        output += `<li>${item.name}: Qty ${item.qty.toFixed(2)}, Client Cost: $${clientCost.toFixed(2)}</li>`;
+      });
+
+      const laborCostInternal = laborHours * costs.laborRateInternal;
+      const laborCostClient = laborHours * costs.laborRateClient;
+      internalTotal += laborCostInternal;
+      clientTotal += laborCostClient;
+
+      output += `<li>Labor: ${laborHours} hrs, Client Cost: $${laborCostClient.toFixed(2)}</li>`;
+      output += '</ul>';
+
+      const pricePerSqft = clientTotal / sqft;
+
+      output += `<p><strong>Total Internal Cost:</strong> $${internalTotal.toFixed(2)}</p>`;
+      output += `<p><strong>Total Client Price:</strong> $${clientTotal.toFixed(2)}</p>`;
+      output += `<p><strong>Client Price Per Sq Ft:</strong> $${pricePerSqft.toFixed(2)}</p>`;
+
+      document.getElementById("results").innerHTML = output;
+    }
+  </script>
+</body>
+</html>
