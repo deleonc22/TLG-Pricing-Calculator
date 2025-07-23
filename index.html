@@ -71,7 +71,7 @@
 
     function calculate() {
       const sqft = parseFloat(document.getElementById("sqft").value);
-      const laborHours = parseFloat(document.getElementById("laborHours").value);
+      const laborHours = sqft / 70;
 
       const costs = {
         turf: 3.27,
