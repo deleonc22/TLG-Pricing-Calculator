@@ -18,6 +18,13 @@
   </style>
 </head>
 <body>
+  <script>
+  const pw = prompt('Enter password to access the tool:');
+  if (pw !== 'LosDaddy') {
+    document.body.innerHTML = '<h1>Access Denied</h1>';
+  }
+</script>
+
   <header>
     <img src="logo.png" alt="Company Logo" />
     <h1>Company Pricing Calculators</h1>
