@@ -19,11 +19,11 @@
 </head>
 <body>
   <script>
-  const pw = prompt('Enter password to access the tool:');
-  if (pw !== 'LosDaddy') {
-    document.body.innerHTML = '<h1>Access Denied</h1>';
-  }
-</script>
+    var pw = prompt("Enter password:");
+    if (pw !== "build123") {
+      document.body.innerHTML = "<h1>Access Denied</h1>";
+    }
+  </script>
 
   <header>
     <img src="logo.png" alt="Company Logo" />
@@ -53,8 +53,7 @@
       <label for="sqft">Square Footage:</label>
       <input type="number" id="sqft" value="8460" />
 
-      <label for="laborHours">Labor Hours:</label>
-      <input type="number" id="laborHours" value="120" />
+      <p>Estimated Labor Hours: <span id="labor-estimate"></span></p>
 
       <button onclick="calculate()">Calculate</button>
 
@@ -72,6 +71,7 @@
     function calculate() {
       const sqft = parseFloat(document.getElementById("sqft").value);
       const laborHours = sqft / 70;
+      document.getElementById("labor-estimate").innerText = laborHours.toFixed(1);
 
       const costs = {
         turf: 3.27,
@@ -123,7 +123,7 @@
       internalTotal += laborCostInternal;
       clientTotal += laborCostClient;
 
-      output += `<li>Labor: ${laborHours} hrs, Client Cost: $${laborCostClient.toFixed(2)}</li>`;
+      output += `<li>Labor (auto): ${laborHours.toFixed(1)} hrs, Client Cost: $${laborCostClient.toFixed(2)}</li>`;
       output += '</ul>';
 
       const pricePerSqft = clientTotal / sqft;
